@@ -1,0 +1,63 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile information",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Firebase Auth UID" },
+        "name": { "type": "string", "description": "User display name" },
+        "avatar": { "type": "string", "description": "User avatar" },
+        "bio": { "type": "string", "description": "User bio" },
+        "sunSign": { "type": "string", "description": "Sun sign" },
+        "moonSign": { "type": "string", "description": "Moon sign" },
+        "risingSign": { "type": "string", "description": "Rising sign" },
+        "soulUrge": { "type": "string", "description": "Soul urge number" },
+        "lifePath": { "type": "string", "description": "Life path number" }
+      },
+      "required": ["uid"]
+    },
+    "JournalEntry": {
+      "title": "JournalEntry",
+      "description": "A journal entry",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Owner UID" },
+        "botId": { "type": "string", "description": "Bot ID" },
+        "botName": { "type": "string", "description": "Bot Name" },
+        "botAvatar": { "type": "string", "description": "Bot Avatar" },
+        "type": { "type": "string", "description": "Entry type" },
+        "content": { "type": "string", "description": "Entry content" },
+        "timestamp": { "type": "number", "description": "Timestamp" },
+        "messages": { "type": "array", "items": { "type": "object" }, "description": "Messages" },
+        "summary": { "type": "string", "description": "Summary" },
+        "comments": { "type": "array", "items": { "type": "object" }, "description": "Comments" },
+        "manifestation": { "$ref": "Manifestation" }
+      },
+      "required": ["uid", "botId", "type", "timestamp"]
+    },
+    "Manifestation": {
+      "title": "Manifestation",
+      "description": "Manifestation details",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "intention": { "type": "string" },
+        "actions": { "type": "array", "items": { "type": "object" } },
+        "alignment": { "type": "number" },
+        "status": { "type": "string", "enum": ["etheric", "anchoring", "manifested"] },
+        "timestamp": { "type": "number" }
+      }
+    }
+  },
+  "firestore": {
+    "/users/{uid}": {
+      "schema": { "$ref": "UserProfile" },
+      "description": "User profiles"
+    },
+    "/journalEntries/{entryId}": {
+      "schema": { "$ref": "JournalEntry" },
+      "description": "User journal entries"
+    }
+  }
+}

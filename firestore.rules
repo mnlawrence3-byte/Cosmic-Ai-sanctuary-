@@ -1,0 +1,136 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: users
+    // Document ID: {uid}
+    // Fields:
+    //   - uid: string (required) - Firebase Auth UID
+    //   - name: string (optional, < 50 chars) - User display name
+    //   - avatar: string (optional, < 10 chars) - User avatar
+    //   - bio: string (optional, < 1000 chars) - User bio
+    //   - sunSign: string (optional, < 20 chars) - Sun sign
+    //   - moonSign: string (optional, < 20 chars) - Moon sign
+    //   - risingSign: string (optional, < 20 chars) - Rising sign
+    //   - soulUrge: string (optional, < 20 chars) - Soul urge number
+    //   - lifePath: string (optional, < 20 chars) - Life path number
+    //
+    // Collection: journalEntries
+    // Document ID: {entryId}
+    // Fields:
+    //   - uid: string (required) - Owner UID
+    //   - botId: string (required, < 50 chars) - Bot ID
+    //   - botName: string (required) - Bot Name
+    //   - botAvatar: string (required) - Bot Avatar
+    //   - type: string (required, < 20 chars) - Entry type
+    //   - content: string (required, < 10000 chars) - Entry content
+    //   - timestamp: number (required) - Timestamp
+    //   - messages: list (required) - Messages
+    //   - summary: string (required) - Summary
+    //   - comments: list (required) - Comments
+    //   - manifestation: map (optional) - Manifestation details
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+       return request.auth != null;
+    }
+
+    function isOwner(userId) {
+       return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function uidNotModified() {
+       return !('uid' in request.resource.data) ||
+         (!('uid' in resource.data) && request.resource.data.uid == request.auth.uid) ||
+         ('uid' in resource.data && request.resource.data.uid == resource.data.uid);
+    }
+
+    function hasRequiredFields(fields) {
+       return request.resource.data.keys().hasAll(fields);
+    }
+
+    function isValidOptionalString(field, minLen, maxLen) {
+      return !(field in request.resource.data) ||
+             (request.resource.data[field] is string &&
+              request.resource.data[field].size() >= minLen &&
+              request.resource.data[field].size() <= maxLen);
+    }
+
+    function hasOnlyAllowedFields(fields) {
+      return request.resource.data.keys().hasOnly(fields);
+    }
+
+    function mapHasOnlyAllowedFields(data, fields) {
+      return data.keys().hasOnly(fields);
+    }
+
+    // ===============================================================
+    // Domain Validators
+    // ===============================================================
+    function isValidUserProfile(data) {
+      return hasOnlyAllowedFields(['uid', 'name', 'avatar', 'bio', 'sunSign', 'moonSign', 'risingSign', 'soulUrge', 'lifePath']) &&
+             data.uid is string &&
+             isValidOptionalString('name', 0, 50) &&
+             isValidOptionalString('avatar', 0, 10) &&
+             isValidOptionalString('bio', 0, 1000) &&
+             isValidOptionalString('sunSign', 0, 20) &&
+             isValidOptionalString('moonSign', 0, 20) &&
+             isValidOptionalString('risingSign', 0, 20) &&
+             isValidOptionalString('soulUrge', 0, 20) &&
+             isValidOptionalString('lifePath', 0, 20);
+    }
+
+    function isValidJournalEntry(data) {
+      return hasOnlyAllowedFields(['uid', 'botId', 'botName', 'botAvatar', 'timestamp', 'messages', 'summary', 'type', 'content', 'comments', 'id', 'manifestation', 'finished']) &&
+             hasRequiredFields(['uid', 'botId', 'timestamp']) &&
+             data.uid is string &&
+             data.botId is string && data.botId.size() < 50 &&
+             isValidOptionalString('botName', 0, 100) &&
+             isValidOptionalString('botAvatar', 0, 1000) &&
+             isValidOptionalString('type', 0, 20) &&
+             isValidOptionalString('content', 0, 100000) &&
+             data.timestamp is number &&
+             (!('messages' in data) || data.messages is list) &&
+             isValidOptionalString('summary', 0, 2000) &&
+             (!('comments' in data) || data.comments is list) &&
+             (!('id' in data) || data.id is string) &&
+             (!('manifestation' in data) || isValidManifestation(data.manifestation)) &&
+             (!('finished' in data) || data.finished is bool);
+    }
+
+    function isValidManifestation(data) {
+      return data is map &&
+             mapHasOnlyAllowedFields(data, ['id', 'intention', 'actions', 'alignment', 'status', 'timestamp']) &&
+             data.id is string &&
+             data.intention is string && data.intention.size() < 5000 &&
+             data.actions is list &&
+             data.alignment is number && data.alignment >= 0 && data.alignment <= 100 &&
+             data.status in ['etheric', 'anchoring', 'manifested'] &&
+             data.timestamp is number;
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidUserProfile(request.resource.data) && request.resource.data.uid == userId;
+      allow update: if isOwner(userId) && isValidUserProfile(request.resource.data) && uidNotModified();
+    }
+
+    match /journalEntries/{entryId} {
+      allow read: if isAuthenticated() && resource.data.uid == request.auth.uid;
+      allow create: if isAuthenticated() && isValidJournalEntry(request.resource.data) && request.resource.data.uid == request.auth.uid;
+      allow update: if isAuthenticated() && isValidJournalEntry(request.resource.data) && resource.data.uid == request.auth.uid && uidNotModified();
+      allow delete: if isAuthenticated() && resource.data.uid == request.auth.uid;
+    }
+  }
+}

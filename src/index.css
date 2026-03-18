@@ -1,0 +1,281 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=JetBrains+Mono:wght@400&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Cormorant Garamond", serif;
+  --font-mono: "JetBrains Mono", monospace;
+  --font-display: "Space Grotesk", sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-[#020205] text-white/90 overflow-hidden selection:bg-purple-500/30 selection:text-white;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  }
+}
+
+.cosmic-bg {
+  background: 
+    radial-gradient(circle at 20% 30%, rgba(76, 29, 149, 0.2) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(30, 58, 138, 0.2) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(88, 28, 135, 0.15) 0%, transparent 70%),
+    linear-gradient(to bottom, #020205, #050510);
+}
+
+.ocean-bg {
+  background: 
+    radial-gradient(circle at 20% 30%, rgba(30, 64, 175, 0.2) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(15, 118, 110, 0.2) 0%, transparent 50%),
+    linear-gradient(to bottom, #0f172a, #1e3a8a);
+}
+
+.forest-bg {
+  background: 
+    radial-gradient(circle at 20% 30%, rgba(6, 78, 59, 0.2) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(20, 83, 45, 0.2) 0%, transparent 50%),
+    linear-gradient(to bottom, #064e3b, #065f46);
+}
+
+.sunset-bg {
+  background: 
+    radial-gradient(circle at 20% 30%, rgba(194, 65, 12, 0.2) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(153, 27, 27, 0.2) 0%, transparent 50%),
+    linear-gradient(to bottom, #431407, #7f1d1d);
+}
+
+.nebula-bg {
+  background: 
+    radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.2) 0%, transparent 50%),
+    linear-gradient(to bottom, #1e1b4b, #312e81);
+}
+
+.void-bg {
+  background: 
+    radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.8) 0%, transparent 50%),
+    linear-gradient(to bottom, #000000, #0a0a0a);
+}
+
+.aurora-bg {
+  background: 
+    radial-gradient(circle at 20% 30%, rgba(16, 185, 129, 0.2) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(59, 130, 246, 0.2) 0%, transparent 50%),
+    linear-gradient(to bottom, #064e3b, #1e3a8a);
+}
+
+.star-field {
+  background-image: radial-gradient(1px 1px at 20px 30px, #eee, rgba(0,0,0,0)),
+                    radial-gradient(1px 1px at 40px 70px, #fff, rgba(0,0,0,0)),
+                    radial-gradient(1.5px 1.5px at 50px 160px, #ddd, rgba(0,0,0,0)),
+                    radial-gradient(1px 1px at 80px 120px, #fff, rgba(0,0,0,0)),
+                    radial-gradient(1px 1px at 110px 10px, #eee, rgba(0,0,0,0)),
+                    radial-gradient(1.5px 1.5px at 150px 150px, #fff, rgba(0,0,0,0));
+  background-repeat: repeat;
+  background-size: 200px 200px;
+  opacity: 0.15;
+  animation: drift 120s linear infinite;
+}
+
+.constellation-field {
+  background-image: 
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 100px 100px;
+  mask-image: radial-gradient(circle at 50% 50%, black, transparent 80%);
+  opacity: 0.2;
+}
+
+@utility glass-card {
+  @apply bg-white/[0.02] backdrop-blur-md border border-white/5 hover:border-white/20 transition-all duration-700 shadow-lg;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0) 100%);
+}
+
+@utility cosmic-card {
+  @apply glass-card rounded-[2rem] overflow-hidden relative;
+}
+
+@layer utilities {
+  .text-glow {
+    text-shadow: 0 0 10px currentColor, 0 0 20px currentColor;
+  }
+  
+  .glass-panel {
+    @apply bg-white/[0.03] backdrop-blur-2xl border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)];
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 100%);
+  }
+
+  .cosmic-card::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-br from-purple-500/10 via-transparent to-blue-500/10 opacity-0 transition-opacity duration-700 pointer-events-none;
+  }
+
+  .cosmic-card:hover::before {
+    @apply opacity-100;
+  }
+
+  .cosmic-gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-blue-200;
+    filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.3));
+  }
+
+  .nebula-pulse {
+    animation: nebula-pulse 8s ease-in-out infinite;
+  }
+
+  .cosmic-glow {
+    animation: cosmic-glow 3s ease-in-out infinite;
+  }
+
+  .float-slow {
+    animation: floating 8s ease-in-out infinite;
+  }
+
+  .float-medium {
+    animation: floating 6s ease-in-out infinite;
+  }
+
+  .float-fast {
+    animation: floating 4s ease-in-out infinite;
+  }
+
+  .text-outline {
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.8);
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .theme-light .glass-panel {
+    background: rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+  }
+
+  .theme-light .text-white {
+    color: #0f172a !important;
+  }
+
+  .theme-light .text-white\/90 {
+    color: rgba(15, 23, 42, 0.9) !important;
+  }
+
+  .theme-light .text-white\/80 {
+    color: rgba(15, 23, 42, 0.8) !important;
+  }
+
+  .theme-light .text-white\/60 {
+    color: rgba(15, 23, 42, 0.6) !important;
+  }
+
+  .theme-light .text-white\/40 {
+    color: rgba(15, 23, 42, 0.4) !important;
+  }
+
+  .theme-light .text-white\/30 {
+    color: rgba(15, 23, 42, 0.3) !important;
+  }
+
+  .theme-light .text-white\/20 {
+    color: rgba(15, 23, 42, 0.2) !important;
+  }
+
+  .theme-light .text-white\/10 {
+    color: rgba(15, 23, 42, 0.1) !important;
+  }
+
+  .theme-light .text-white\/5 {
+    color: rgba(15, 23, 42, 0.05) !important;
+  }
+
+  .theme-light .border-white\/10 {
+    border-color: rgba(15, 23, 42, 0.1) !important;
+  }
+
+  .theme-light .border-white\/5 {
+    border-color: rgba(15, 23, 42, 0.05) !important;
+  }
+
+  .theme-light .bg-white\/5 {
+    background-color: rgba(15, 23, 42, 0.05) !important;
+  }
+
+  .theme-light .bg-white\/10 {
+    background-color: rgba(15, 23, 42, 0.1) !important;
+  }
+
+  .theme-light .cosmic-gradient-text {
+    background-image: linear-gradient(to right, #0f172a, #334155, #475569);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .theme-light .silver-bloom-glow {
+    filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.1));
+    color: rgba(0, 0, 0, 0.05);
+  }
+
+  .theme-light .star-field {
+    opacity: 0.05;
+    filter: invert(1);
+  }
+
+  .theme-light .constellation-field {
+    opacity: 0.1;
+    filter: invert(1);
+  }
+}
+
+@keyframes nebula-pulse {
+  0%, 100% { transform: scale(1) translate(0, 0); opacity: 0.3; filter: blur(20px); }
+  33% { transform: scale(1.2) translate(20px, -10px); opacity: 0.5; filter: blur(25px); }
+  66% { transform: scale(0.9) translate(-10px, 20px); opacity: 0.4; filter: blur(15px); }
+}
+
+@keyframes cosmic-glow {
+  0%, 100% { 
+    box-shadow: 0 0 15px rgba(168, 85, 247, 0.4), inset 0 0 10px rgba(168, 85, 247, 0.2); 
+    border-color: rgba(168, 85, 247, 0.4);
+  }
+  50% { 
+    box-shadow: 0 0 30px rgba(168, 85, 247, 0.8), inset 0 0 20px rgba(168, 85, 247, 0.4); 
+    border-color: rgba(168, 85, 247, 0.8);
+  }
+}
+
+@keyframes floating {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(1deg); }
+}
+
+/* Custom scrollbar refinement */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, rgba(168, 85, 247, 0.2), rgba(59, 130, 246, 0.2));
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(to bottom, rgba(168, 85, 247, 0.4), rgba(59, 130, 246, 0.4));
+}
+
+.mask-fade-bottom {
+  mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+}
+
+.mask-fade-top {
+  mask-image: linear-gradient(to top, black 80%, transparent 100%);
+}

@@ -1,0 +1,8 @@
+{
+  "name": "Cosmic-Ai-sanctuary-",
+  "description": "An immersive, space-themed AI chat experience with multiple celestial personalities.",
+  "requestFramePermissions": [
+    "microphone",
+    "notifications"
+  ]
+}
